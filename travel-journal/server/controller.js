@@ -3,7 +3,7 @@ require("dotenv").config();
 const { CONNECTION_STRING } = process.env
 
 const Sequelize = require('sequelize');
-console.log(CONNECTION_STRING);
+
 
 const sequelize = new Sequelize(CONNECTION_STRING, {
     dialect: 'postgres',
@@ -15,6 +15,22 @@ const sequelize = new Sequelize(CONNECTION_STRING, {
 })
 
 module.exports = {
+    getCountries: (req, res) => {
+        sequelize.query
+    },
+    
+    createCities: (req, res) => {
+        
+    },
+
+    getCities: (req, res) => {
+        
+    },
+
+    deleteCities: (req, res) => {
+      
+    },
+
     seed: (req, res) => {
         sequelize.query(`
             drop table if exists cities;
@@ -235,17 +251,3 @@ module.exports = {
     }
 }
 
-// cities: (req, res) => {
-    // city_id,
-    // name,
-    // rating,
-    // country_id,
-//} = req.body;
-
-// in SQL create table looks like:
-// CREATE TABLE cities(
-    //city_id SERIAL PRIMARY KEY,
-    //name VARCHAR(40),
-    //rating INTEGER,
-    //country_id INTEGER
-//);
