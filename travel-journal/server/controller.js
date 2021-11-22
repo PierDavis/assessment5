@@ -1,7 +1,6 @@
 require("dotenv").config();
 
 const { CONNECTION_STRING } = process.env
-
 const Sequelize = require('sequelize');
 
 
@@ -15,8 +14,20 @@ const sequelize = new Sequelize(CONNECTION_STRING, {
 })
 
 module.exports = {
-    getCountries: (req, res) => {
-        sequelize.query
+    getCountries: async (req, res) => {
+        let countriesQuery = "SELECT * FROM countries"
+        // console.log("countriesQuery", countriesQuery);
+        // let countriesList = await sequelize.query(countriesQuery)
+        // console.log("countriesList", countriesList);
+        // res.status(200).send(countriesList[0])
+    
+        //option 2:
+        sequelize.query(countriesQuery)
+            .then((dbRes)=> {
+                res.status(200).send(dbRes[0])
+            })
+
+
     },
     
     createCities: (req, res) => {
@@ -45,7 +56,7 @@ module.exports = {
                 city_id SERIAL PRIMARY KEY,
                 name VARCHAR(40),
                 rating INTEGER,
-                country_id INTEGER
+                country_id INTEGER references countries(country_id)
             );
 
             insert into countries (name)
@@ -244,9 +255,16 @@ module.exports = {
             ('Yemen'),
             ('Zambia'),
             ('Zimbabwe');
-        `).then(() => {
-            console.log('DB seeded!')
-            res.sendStatus(200)
+
+            insert into cities(name, rating, country_id)
+            values('Copenhagen', 5, 33),
+            ('Malmo', 4, 171),
+            ('Nairobi', 4, 89);
+    
+
+        `).then((dbRes) => {
+            console.log("dbRes", dbRes);
+            res.status(200).send(dbRes[0])
         }).catch(err => console.log('error seeding DB', err))
     }
 }
