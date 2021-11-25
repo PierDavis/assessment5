@@ -2,6 +2,7 @@ require("dotenv").config();
 
 const { CONNECTION_STRING } = process.env
 const Sequelize = require('sequelize');
+const { values } = require("sequelize/types/lib/operators");
 
 
 const sequelize = new Sequelize(CONNECTION_STRING, {
@@ -27,12 +28,33 @@ module.exports = {
                 res.status(200).send(dbRes[0])
             })
 
+    },
+    // let body = {
+    //     name: nameInput.value, 
+    //     rating: +userRating, 
+    //     countryId: +countrySelect.value
 
-    },
-    
-    createCities: (req, res) => {
-        
-    },
+    // createCities: (req, res) => {
+    //     console.log("createCities", req)
+    //    const {
+    //        name,
+    //        rating,
+    //        countryId,
+    //    } = req.body;
+
+    //     sequelize.query(`insert into cities '${name}',
+    //     ${rating},
+    //     country_id = ${countryId};
+    //     `)
+    //         .then((dbRes)=> {
+    //             res.status(200).send(dbRes[0])
+    //         })
+    // },
+
+    // insert into cities(name, rating, country_id)
+    // values('Copenhagen', 5, 33),
+    // ('Malmo', 4, 171),
+    // ('Nairobi', 4, 89);
 
     getCities: (req, res) => {
         
