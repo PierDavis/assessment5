@@ -2,7 +2,7 @@ require("dotenv").config();
 
 const { CONNECTION_STRING } = process.env
 const Sequelize = require('sequelize');
-const { values } = require("sequelize/types/lib/operators");
+//const { values } = require("sequelize/types/lib/operators");
 
 
 const sequelize = new Sequelize(CONNECTION_STRING, {
@@ -15,7 +15,7 @@ const sequelize = new Sequelize(CONNECTION_STRING, {
 })
 
 module.exports = {
-    getCountries: async (req, res) => {
+    getCountries: (req, res) => {
         let countriesQuery = "SELECT * FROM countries"
         // console.log("countriesQuery", countriesQuery);
         // let countriesList = await sequelize.query(countriesQuery)
@@ -26,7 +26,7 @@ module.exports = {
         sequelize.query(countriesQuery)
             .then((dbRes)=> {
                 res.status(200).send(dbRes[0])
-            })
+            })  .catch(err=>console.log(err));
 
     },
     // let body = {
@@ -34,35 +34,39 @@ module.exports = {
     //     rating: +userRating, 
     //     countryId: +countrySelect.value
 
-    // createCities: (req, res) => {
-    //     console.log("createCities", req)
-    //    const {
-    //        name,
-    //        rating,
-    //        countryId,
-    //    } = req.body;
+    createCity: (req, res) => {
+        //console.log("createCities", req)
+       const {
+           name,
+           rating,
+           countryId,
+       } = req.body;
 
-    //     sequelize.query(`insert into cities '${name}',
-    //     ${rating},
-    //     country_id = ${countryId};
-    //     `)
-    //         .then((dbRes)=> {
-    //             res.status(200).send(dbRes[0])
-    //         })
-    // },
-
-    // insert into cities(name, rating, country_id)
-    // values('Copenhagen', 5, 33),
-    // ('Malmo', 4, 171),
-    // ('Nairobi', 4, 89);
+        sequelize.query(`insert into cities (name, rating, country_id)
+            values ('${name}', ${rating}, ${countryId});`)
+            .then((dbRes)=> {
+                res.status(200).send(dbRes[0])
+            }) .catch(err=>console.log(err));
+    },
 
     getCities: (req, res) => {
-        
+        sequelize.query(`SELECT city_id, cities.name as city, rating, countries.country_id, countries.name as country 
+            FROM cities JOIN countries on cities.country_id = countries.country_id
+                order by rating desc;
+        `).then(dbRes=> 
+                res.status(200).send(dbRes[0])
+            )  .catch(err=>console.log(err));
     },
 
-    deleteCities: (req, res) => {
-      
+    deleteCity: (req, res) => {
+        const {id} = req.params;
+        sequelize.query(`
+            delete from cities
+                where city_id = ${id};
+        `).then(dbRes => res.status(200).send(dbRes[0]))
+            .catch(err=>console.log(err));
     },
+}
 
     seed: (req, res) => {
         sequelize.query(`
@@ -289,5 +293,5 @@ module.exports = {
             res.status(200).send(dbRes[0])
         }).catch(err => console.log('error seeding DB', err))
     }
-}
+
 
